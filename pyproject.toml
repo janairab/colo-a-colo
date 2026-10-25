@@ -1,0 +1,29 @@
+[build-system] # indica a ferramenta usada para construir o pacote. 
+requires = ["setuptools>=68"]  
+build-backend = "setuptools.build_meta"  
+[project] # identifica o projeto e as dependências.  
+name = "gestao-oficina"  
+version = "0.1.0"  
+requires-python = ">=3.12" # define a versão mínima de Python 
+dependencies = [  
+"fastapi>=0.115,<1",  
+"uvicorn>=0.30,<1",  
+"jinja2>=3.1,<4",  
+"python-multipart>=0.0.9,<1"  
+]  
+[project.optional-dependencies]  
+# dev agrupa dependências de desenvolvimento.
+dev = [  
+"pytest>=8,<10"  
+]  
+[tool.setuptools.packages.find]  
+
+where = ["src"] # indica onde estão os pacotes.
+[tool.setuptools.package-data]  # package-data inclui recursos que não são ficheiros Python
+gestao_oficina = [  
+"templates/*.html",  #
+"templates/clientes/*.html",  
+"static/css/*.css"  
+]  
+[tool.pytest.ini_options]  
+testpaths = ["tests"] # testpaths identifica a pasta dos testes
