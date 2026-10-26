@@ -1,4 +1,15 @@
-# Criar tabela Bebé
+/* Criar tabela Cuidador */
+CREATE TABLE IF NOT EXISTS "cuidador" (
+	"id_cuidador" INTEGER NOT NULL,
+	"nome" VARCHAR NOT NULL,
+	"email" VARCHAR NOT NULL UNIQUE,
+	"data_nascimento" DATE NOT NULL,
+	PRIMARY KEY("id_cuidador"),
+	FOREIGN KEY ("id_cuidador") REFERENCES "bebe"("id_cuidador")
+	ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+/* Criar tabela Bebé */
 CREATE TABLE IF NOT EXISTS "bebe" (
 	"id_bebe" INTEGER NOT NULL,
 	"nome" VARCHAR NOT NULL,
@@ -11,19 +22,7 @@ CREATE TABLE IF NOT EXISTS "bebe" (
 	ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-# Criar tabela Cuidador
-CREATE TABLE IF NOT EXISTS "cuidador" (
-	"id_cuidador" INTEGER NOT NULL,
-	"nome" VARCHAR NOT NULL,
-	"email" VARCHAR NOT NULL UNIQUE,
-	"data_nascimento" DATE NOT NULL,
-	PRIMARY KEY("id_cuidador"),
-	FOREIGN KEY ("id_cuidador") REFERENCES "bebe"("id_cuidador")
-	ON UPDATE NO ACTION ON DELETE NO ACTION
-);
-
-
-# Criar tabela registro_rotina
+/* Criar tabela registro_rotina */
 CREATE TABLE IF NOT EXISTS "registro_rotina" (
 	"id_registro" INTEGER NOT NULL,
 	"id_bebe" INTEGER NOT NULL,
@@ -42,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "registro_rotina" (
 	ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 
-# Criar tabela alimentacao
+/* Criar tabela alimentacao */
 CREATE TABLE IF NOT EXISTS "alimentacao" (
 	"id_registro" INTEGER NOT NULL,
 	"tipo_alimentacao" VARCHAR NOT NULL,
@@ -60,7 +59,7 @@ CREATE TABLE IF NOT EXISTS "alimentacao" (
 );
 
 
-# Criar tabela fralda
+/* Criar tabela fralda */
 CREATE TABLE IF NOT EXISTS "fralda" (
 	"id_registro" INTEGER NOT NULL,
 	"miccao" VARCHAR,
@@ -72,7 +71,7 @@ CREATE TABLE IF NOT EXISTS "fralda" (
 );
 
 
-# Criar tabela banho
+/* Criar tabela banho*/
 CREATE TABLE IF NOT EXISTS "banho" (
 	"id_registro" INTEGER NOT NULL,
 	"notas" TEXT,
@@ -81,7 +80,7 @@ CREATE TABLE IF NOT EXISTS "banho" (
     REFERENCES "registro_rotina"("id_registro")
 );
 
-# Criar tabela sono
+/* Criar tabela sono */
 CREATE TABLE IF NOT EXISTS "sono" (
 	"id_registro" INTEGER NOT NULL,
 	"inicio_sono" DATETIME NOT NULL,
