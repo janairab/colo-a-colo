@@ -7,7 +7,7 @@ def registrar_bebe(conn, nome, sexo, data_nascimento, id_cuidador):
 
     # executa a consulta SQL
     cursor.execute("""
-        INSERT INTO bebe (nome, sexo, data_nascimento)
+        INSERT INTO bebe (nome, sexo, data_nascimento, id_cuidador)
         VALUES (?, ?, ?, ?)
     """, (nome, sexo, data_nascimento, id_cuidador))
 
