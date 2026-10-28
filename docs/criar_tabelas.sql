@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS "cuidador" (
 	"id_cuidador" INTEGER PRIMARY KEY,
 	"nome" VARCHAR NOT NULL,
 	"email" VARCHAR NOT NULL UNIQUE,
-	"data_nascimento" DATE NOT NULL
+	"data_nascimento" DATE NOT NULL,
+	"password_hash" TEXT NOT NULL
 );
 
 /* Criar tabela Bebé */
