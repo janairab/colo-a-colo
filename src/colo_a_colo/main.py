@@ -82,13 +82,14 @@ def novo_cuidador():
         nome = request.form.get("nome", "").strip()
         email = request.form.get("email", "").strip()
         data_nascimento = request.form.get("data_nascimento", "")
+        password = request.form.get("password", "")
 
-        if not nome or not email or not data_nascimento:
+        if not nome or not email or not data_nascimento or not password:
             return "Preenche todos os campos.", 400
 
         try:
             registrar_cuidador(
-                conn, nome, email, data_nascimento
+                conn, nome, email, data_nascimento, password
             )
 
         finally:
@@ -133,6 +134,16 @@ def novo_cuidador():
             name="data_nascimento"
             required>
         <br><br>
+
+        <label for="password">
+        Palavra-passe:</label>
+        <input
+        type="password"
+        id="password"
+        name="password"
+        minlength="8"
+        required
+        ><br><br>
 
         <button type="submit">Guardar cuidador</button>
     </form>
