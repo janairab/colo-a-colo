@@ -1,8 +1,8 @@
 /* Criar tabela Cuidador */
 CREATE TABLE IF NOT EXISTS "cuidador" (
 	"id_cuidador" INTEGER PRIMARY KEY,
-	"nome" VARCHAR NOT NULL,
-	"email" VARCHAR NOT NULL UNIQUE,
+	"nome" VARCHAR(50) NOT NULL,
+	"email" VARCHAR(50) NOT NULL UNIQUE,
 	"data_nascimento" DATE NOT NULL,
 	"password_hash" TEXT NOT NULL
 );
@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS "cuidador" (
 /* Criar tabela Bebé */
 CREATE TABLE IF NOT EXISTS "bebe" (
 	"id_bebe" INTEGER PRIMARY KEY,
-	"nome" VARCHAR NOT NULL,
+	"nome" VARCHAR(50) NOT NULL,
 	"data_nascimento" DATE NOT NULL,
-	"sexo" VARCHAR NOT NULL,
+	"sexo" VARCHAR(20) NOT NULL,
 	"id_cuidador" INTEGER NOT NULL,
 	FOREIGN KEY ("id_cuidador")
     REFERENCES "cuidador"("id_cuidador")
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS "bebe" (
 CREATE TABLE IF NOT EXISTS "registro_rotina" (
 	"id_registro" INTEGER PRIMARY KEY,
 	"id_bebe" INTEGER NOT NULL,
-	"tipo_registro" VARCHAR NOT NULL,
+	"tipo_registro" VARCHAR(50) NOT NULL,
 	"data_hora" DATETIME NOT NULL,
 	"criado_em" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"notas" TEXT,
@@ -33,14 +33,14 @@ CREATE TABLE IF NOT EXISTS "registro_rotina" (
 /* Criar tabela alimentacao */
 CREATE TABLE IF NOT EXISTS "alimentacao" (
 	"id_registro" INTEGER PRIMARY KEY,
-	"tipo_alimentacao" VARCHAR NOT NULL,
-	"alimento" VARCHAR,
-	"inicio_alimentacao" DATETIME,
-	"fim_alimentacao" DATETIME,
+	"tipo_alimentacao" VARCHAR(50) NOT NULL,
+	"alimento" VARCHAR(150),
+	"inicio_amamentacao" DATETIME,
+	"fim_amamentacao" DATETIME,
 	"quantidade" INTEGER,
-	"ml_ou_g" VARCHAR,
-	"mama_lados" VARCHAR,
-	"aceitacao" VARCHAR,
+	"ml_ou_g" VARCHAR(10),
+	"mama_lados" VARCHAR(10),
+	"aceitacao" VARCHAR(20),
 	"notas" TEXT,
 	FOREIGN KEY ("id_registro")	
     REFERENCES "registro_rotina"("id_registro")
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS "alimentacao" (
 /* Criar tabela fralda */
 CREATE TABLE IF NOT EXISTS "fralda" (
 	"id_registro" INTEGER PRIMARY KEY,
-	"miccao" VARCHAR,
-	"coco" VARCHAR,
+	"miccao" VARCHAR(25),
+	"coco" VARCHAR(25),
 	"notas" TEXT,
 	FOREIGN KEY ("id_registro")	
     REFERENCES "registro_rotina"("id_registro")
