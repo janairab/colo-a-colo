@@ -1,39 +1,45 @@
-def registrar_alimentacao(
-        conn, 
-        id_registro, 
-        tipo_alimentacao, 
-        alimento, 
-        inicio_alimentacao=None, 
-        fim_alimentacao=None, 
-        quantidade=None, 
-        ml_ou_g=None, 
-        mama_lados=None, 
-        aceitacao=None, 
-        notas=None):
-    
-    """Registra uma alimentação na base de dados"""
+class Alimentacao:
 
-    # Cria o cursor para executar comandos SQL
-    cursor = conn.cursor()
+    @staticmethod
+    def registrar_alimentacao(
+            conn,
+            id_registro,
+            tipo_alimentacao,
+            alimento=None,
+            fim_amamentacao=None,
+            quantidade=None,
+            ml_ou_g=None,
+            mama_lados=None,
+            aceitacao=None,
+            notas=None):
+        """Registra uma alimentação na base de dados"""
 
-    # executa a consulta SQL
-    cursor.execute("""
-        INSERT INTO alimentacao (
-        id_registro, 
-        tipo_alimentacao, 
-        alimento, 
-        inicio_alimentacao, 
-        fim_alimentacao, 
-        quantidade, 
-        ml_ou_g, 
-        mama_lados, 
-        aceitacao, 
-        notas)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (id_registro, tipo_alimentacao, alimento, inicio_alimentacao, fim_alimentacao, quantidade, ml_ou_g, mama_lados, aceitacao, notas))
+        # Valida o alimento conforme o tipo de alimentação
+        # verifica se o valor está vazio ou é None.
+        if tipo_alimentacao == "amamentacao":
+            alimento = None
 
-    # Salva as alterações na base de dados
-    conn.commit()
+        # verifica se o texto está vazio ou contém apenas espaços.
+        elif not alimento or not alimento.strip():
+            raise ValueError("O alimento é obrigatório.")
 
-    # Retorna o ID do registro associado
-    return id_registro
+        # Cria o cursor para executar comandos SQL
+        cursor = conn.cursor()
+
+        # executa a consulta SQL
+        cursor.execute("""
+            INSERT INTO alimentacao (
+            id_registro, 
+            tipo_alimentacao, 
+            alimento, 
+            fim_amamentacao, 
+            quantidade, 
+            ml_ou_g, 
+            mama_lados, 
+            aceitacao, 
+            notas)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (id_registro, tipo_alimentacao, alimento, fim_amamentacao, quantidade, ml_ou_g, mama_lados, aceitacao, notas))
+
+        # Retorna o ID do registro associado
+        return id_registro

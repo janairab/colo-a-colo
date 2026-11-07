@@ -1,14 +1,15 @@
-def registrar_rotina(conn, id_bebe, tipo_registro, data_hora, notas=None):
+class Rotina:
 
-    """Registra uma rotina na base de dados"""
+    @staticmethod
+    def registrar_rotina(conn, id_bebe, tipo_registro, data_hora, notas=None):
 
-    cursor = conn.cursor()
+        """Registra uma rotina na base de dados"""
 
-    cursor.execute("""
-        INSERT INTO registro_rotina (id_bebe, tipo_registro, data_hora, notas)
-        VALUES (?, ?, ?, ?)
-    """, (id_bebe, tipo_registro, data_hora, notas))
+        cursor = conn.cursor()
 
-    conn.commit()
+        cursor.execute("""
+            INSERT INTO registro_rotina (id_bebe, tipo_registro, data_hora, notas)
+            VALUES (?, ?, ?, ?)
+        """, (id_bebe, tipo_registro, data_hora, notas))
 
-    return cursor.lastrowid
+        return cursor.lastrowid
