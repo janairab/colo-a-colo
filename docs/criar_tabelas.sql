@@ -22,7 +22,13 @@ CREATE TABLE IF NOT EXISTS "bebe" (
 CREATE TABLE IF NOT EXISTS "registro_rotina" (
 	"id_registro" INTEGER PRIMARY KEY,
 	"id_bebe" INTEGER NOT NULL,
-	"tipo_registro" VARCHAR(50) NOT NULL,
+	"tipo_registro" VARCHAR(50) NOT NULL
+	CHECK (tipo_registro IN (
+    'alimentacao',
+    'sono',
+    'banho',
+    'fralda'
+	)),
 	"data_hora" DATETIME NOT NULL,
 	"criado_em" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	"notas" TEXT,
@@ -33,12 +39,18 @@ CREATE TABLE IF NOT EXISTS "registro_rotina" (
 /* Criar tabela alimentacao */
 CREATE TABLE IF NOT EXISTS "alimentacao" (
 	"id_registro" INTEGER PRIMARY KEY,
-	"tipo_alimentacao" VARCHAR(50) NOT NULL,
+	"tipo_alimentacao" VARCHAR(50) NOT NULL
+	CHECK (tipo_alimentacao IN (
+    'amamentacao',
+    'mamadeira',
+    'solidos'
+	)),
 	"alimento" VARCHAR(150),
-	"inicio_amamentacao" DATETIME,
 	"fim_amamentacao" DATETIME,
-	"quantidade" INTEGER,
-	"ml_ou_g" VARCHAR(10),
+	"quantidade" REAL
+	CHECK (quantidade > 0),
+	"ml_ou_g" VARCHAR(10)
+	CHECK (ml_ou_g IN ('ml', 'g')),
 	"mama_lados" VARCHAR(10),
 	"aceitacao" VARCHAR(20),
 	"notas" TEXT,
@@ -69,7 +81,6 @@ CREATE TABLE IF NOT EXISTS "banho" (
 /* Criar tabela sono */
 CREATE TABLE IF NOT EXISTS "sono" (
 	"id_registro" INTEGER PRIMARY KEY,
-	"inicio_sono" DATETIME NOT NULL,
 	"fim_sono" DATETIME,
 	"notas" TEXT,
 	FOREIGN KEY ("id_registro")	
