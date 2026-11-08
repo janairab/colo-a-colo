@@ -1,5 +1,5 @@
 import sqlite3
-from config import DB_PATH, SQL_PATH
+from colo_a_colo.config import DB_PATH, SQL_PATH
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)

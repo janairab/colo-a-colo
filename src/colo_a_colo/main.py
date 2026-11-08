@@ -2,9 +2,9 @@ import os
 import secrets
 import sqlite3
 
-from database import get_db, criar_tabelas
-from domain.cuidador import Cuidador
-from domain.bebe import Bebe
+from colo_a_colo.database import get_db, criar_tabelas
+from colo_a_colo.domain.cuidador import Cuidador
+from colo_a_colo.domain.bebe import Bebe
 from werkzeug.security import check_password_hash
 from flask import Flask, request, session, redirect, url_for
 # session: guarda a identificação do cuidador que iniciou sessão
@@ -56,8 +56,7 @@ def consultar_tabelas():
 
         # obtém todas as linhas devolvidas pela consulta
         tabelas = cursor.fetchall()
-        conn.close()
-
+        
         lista_tabelas = ""
 
         for tabela in tabelas:
