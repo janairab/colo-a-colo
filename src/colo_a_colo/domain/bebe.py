@@ -87,3 +87,19 @@ class Bebe:
 
         # Retorna o ID gerado pelo SQLite
         return cursor.lastrowid
+
+    @staticmethod
+    def consultar_bebes(conn, id_cuidador):
+
+        """Consulta os bebês cadastrados por um Cuidador"""
+
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            SELECT id_bebe, nome
+            FROM bebe
+            WHERE id_cuidador = ?
+            ORDER BY nome
+        """, (id_cuidador,))
+
+        return cursor.fetchall()
