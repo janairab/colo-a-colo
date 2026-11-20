@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Registrar bebê | Colo a Colo</title>
+
+</head>
+<body>
+
+    <!-- Título principal da página -->
+    <h1>Registrar bebê</h1>
+
+    <!--
+        Formulário para cadastrar um bebê.
+        O método POST envia os dados para a rota /novo/bebe.
+    -->
+    <form method="POST" action="/novo/bebe">
+
+        <!-- Campo para informar o nome do bebê -->
+        <label for="nome">Nome do bebê:</label>
+        <input type="text" id="nome" name="nome" required>
+        <br><br>
+
+        <!--
+            Campo de seleção do gênero.
+            A opção inicial não possui valor, obrigando
+            o usuário a escolher uma das opções disponíveis.
+        -->
+        <label for="genero">Gênero:</label>
+        <select id="genero" name="genero" required>
+            <option value="">Selecione</option>
+            <option value="Feminino">Feminino</option>
+            <option value="Masculino">Masculino</option>
+        </select>
+        <br><br>
+
+        <!-- Campo para informar a data de nascimento -->
+        <label for="data_nascimento">Data de nascimento:</label>
+        <input type="date" id="data_nascimento" name="data_nascimento" required>
+        <br><br>
+
+        <!-- Envia os dados do formulário para o Flask -->
+        <button type="submit">Registrar Bebê</button>
+
+    </form>
+
+    <!-- Retorna à página inicial -->
+    <p><a href="/">Voltar à página inicial</a></p>
+
+</body>
+</html>

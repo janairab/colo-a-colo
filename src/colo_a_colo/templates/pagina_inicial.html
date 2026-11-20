@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Colo a Colo</title>
+</head>
+<body>
+
+    <!-- Nome do sistema -->
+    <h1>Colo a Colo</h1>
+
+    <!--
+        Verifica se existe uma mensagem para apresentar.
+        Essa mensagem pode ser enviada pela rota do Flask,
+        por exemplo, após o login.
+    -->
+    {% if mensagem %}
+        <p>{{ mensagem }}</p>
+    {% endif %}
+
+    <!-- Frase de apresentação do sistema -->
+    <p>Cada cuidado é um gesto de amor</p>
+
+    <hr>
+
+    <p>Cuidar. Acompanhar. Organizar.</p>
+
+    <!-- Menu principal do sistema -->
+    <ul>
+
+        <!--
+            Verifica se existe um ID de cuidador na sessão.
+            Se existir, significa que o cuidador está autenticado.
+        -->
+        {% if session.get("id_cuidador") %}
+
+            <!-- Opções disponíveis após o login -->
+
+            <!-- Permite cadastrar um bebê -->
+            <li><a href="/novo/bebe">Registrar Bebê</a></li>
+
+            <!-- Permite consultar os bebês cadastrados -->
+            <li><a href="/consultar/bebes">Consultar Bebês</a></li>
+
+            <!-- Direciona para o menu de registro das rotinas -->
+            <li><a href="/adicionar/rotina">Adicionar Rotina</a></li>
+
+            <!-- Permite encerrar a sessão do cuidador -->
+            <li><a href="/logout">Encerrar Sessão</a></li>
+
+        {% else %}
+
+            <!--
+                Se não existir um ID de cuidador na sessão,
+                apresenta somente as opções disponíveis
+                para quem ainda não fez login.
+            -->
+
+            <!-- Direciona para a página de login -->
+            <li><a href="/login">Iniciar Sessão</a></li>
+
+            <!-- Permite cadastrar um novo cuidador -->
+            <li><a href="/novo/cuidador">Registrar Cuidador</a></li>
+
+        {% endif %}
+
+    </ul>
+
+</body>
+</html>

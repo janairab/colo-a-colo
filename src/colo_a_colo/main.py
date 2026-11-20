@@ -7,15 +7,18 @@ from colo_a_colo.domain.cuidador import Cuidador
 from colo_a_colo.domain.bebe import Bebe
 from colo_a_colo.domain.rotina import Rotina
 from colo_a_colo.domain.alimentacao import Alimentacao
+from colo_a_colo.domain.banho import Banho
 from werkzeug.security import check_password_hash
-from flask import Flask, request, session, redirect, url_for
+from flask import Flask, request, session, redirect, url_for, render_template
 # session: guarda a identificação do cuidador que iniciou sessão
 # redirect e url_for: permitem encaminhar o utilizador para outra página
 # check_password_hash: verifica a palavra-passe sem precisarmos de guardar a palavra-passe original
+# carregar um arquivo HTML da pasta templates e apresentá-lo ao usuário pelo navegador, ela permite separar o HTML do código Python.
 
 app = Flask(__name__)
 # Chave de sessão aleatória, gerada a cada arranque
 app.secret_key = secrets.token_hex(32)
+
 
 def registrar_alimentacao_completa(
         conn,
@@ -54,36 +57,18 @@ def registrar_alimentacao_completa(
         )
 
     return id_registro
-     
+
+
 @app.route("/", methods=["GET"])
 def pagina_inicial():
 
     mensagem = session.pop("mensagem", "")
 
-    return f"""
-<h1>Colo a Colo</h1>
-{f'<p>{mensagem}</p>' if mensagem else ''}
-<p style="margin-bottom: 2px;">
-    Cada cuidado é um gesto de amor
-</p>
+    return render_template(
+        "pagina_inicial.html",
+        mensagem=mensagem
+    )
 
-<hr style="width: 220px; margin: 4px 0;">
-
-<p style="margin-top: 2px;">
-    Cuidar. Acompanhar. Organizar.
-</p>
-
-<ul>
-<li><a href="/login">Iniciar Sessão</a></li>
-<br>
-<li><a href="/novo/cuidador">Registrar Cuidador</a></li>
-<li><a href="/novo/bebe">Registrar Bebê</a></li>
-<br>
-<li><a href="/consultar/bebes">Consultar Bebês</a></li>
-<br>
-<li><a href="/novo/alimentacao">Novo Alimentação</a></li>
-</ul>
-"""
 
 @app.route("/tabelas", methods=["GET"])
 def consultar_tabelas():
@@ -100,15 +85,15 @@ def consultar_tabelas():
 
         # obtém todas as linhas devolvidas pela consulta
         tabelas = cursor.fetchall()
-        
+
         lista_tabelas = ""
 
         for tabela in tabelas:
             lista_tabelas += f"<li>{tabela[0]}</li>"
 
         # <br> Linha em branco para dar distancia do parágrafo
-        # Ou 
-        # <p style="margin-top: 40px;"> 
+        # Ou
+        # <p style="margin-top: 40px;">
         # <a href="/">Voltar à página inicial</a> </p>
         return f"""
         <p style="margin-top: 40px;"></p>
@@ -123,9 +108,10 @@ def consultar_tabelas():
     finally:
         conn.close()
 
+
 @app.route("/novo/cuidador", methods=["GET", "POST"])
 def novo_cuidador():
-    
+
     if request.method == "POST":
 
         nome = request.form.get("nome", "").strip()
@@ -147,46 +133,10 @@ def novo_cuidador():
         finally:
             conn.close()
 
-        return """
-        <br><br>
-        <h1>Cuidador registrado com sucesso!</h1>
-        <p>O cadastro está feito!</p>
-        <a href="/novo/cuidador">Registrar outro cuidador</a>
-        <br><br>
-        <a href="/login">Iniciar sessão</a>
-        <br>
-        <a href="/">Voltar à página inicial</a>
-        """
-    
-    return """
-    <h1>Registrar Cuidador</h1>
+        return render_template("cuidador_sucesso.html")
 
-    <form method="POST" action="/novo/cuidador">
+    return render_template("cuidador.html")
 
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
-        <br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br><br>
-
-        <label for="data_nascimento">Data de nascimento:</label>
-        <input type="date" id="data_nascimento"
-               name="data_nascimento" required>
-        <br><br>
-
-        <label for="password">Palavra-passe:</label>
-        <input type="password" id="password"
-               name="password" required>
-        <br><br>
-
-        <button type="submit">Registrar cuidador</button>
-
-    </form>
-
-    <p><a href="/">Voltar à página inicial</a></p>
-    """
 
 @app.route("/login", methods=["GET", "POST"])
 def iniciar_sessao():
@@ -208,11 +158,10 @@ def iniciar_sessao():
             conn.close()
 
         if id_cuidador is None:
-            return """
-            <h1>Credenciais inválidas</h1>
-            <p>Verifique o email e a palavra-passe.</p>
-            <a href="/login">Tentar novamente</a>
-            """, 401 
+            return render_template(
+                "login.html",
+                erro="Email ou palavra-passe inválidos."
+            ), 401
 
         # Guarda o Id do cuidador na sessão
         session["id_cuidador"] = id_cuidador
@@ -220,25 +169,7 @@ def iniciar_sessao():
         session["mensagem"] = "Sessão iniciada com sucesso!"
         return redirect(url_for("pagina_inicial"))
 
-    return """
-    <h1>Iniciar Sessão</h1>
-
-    <form method="POST" action="/login">
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br><br>
-
-        <label for="password">Palavra-passe:</label>
-        <input type="password" id="password" name="password" required>
-        <br><br>
-
-        <button type="submit">Iniciar sessão</button>
-
-    </form>
-
-    <p><a href="/">Voltar à página inicial</a></p>
-    """
+    return render_template("login.html")
 
 
 @app.route("/novo/bebe", methods=["GET", "POST"])
@@ -247,14 +178,12 @@ def novo_bebe():
     if "id_cuidador" not in session:
         return redirect(url_for("iniciar_sessao"))
 
-
     if request.method == "POST":
         nome = request.form.get("nome", "").strip()
-        sexo = request.form.get("sexo", "")
+        genero = request.form.get("genero", "")
         data_nascimento = request.form.get("data_nascimento", "")
 
-
-        if not nome or not sexo or not data_nascimento:
+        if not nome or not genero or not data_nascimento:
             return "Preenche todos os campos.", 400
 
         id_cuidador = session["id_cuidador"]
@@ -263,55 +192,16 @@ def novo_bebe():
 
         try:
             Bebe.registrar_bebe(
-                conn, nome, sexo, data_nascimento, id_cuidador
+                conn, nome, genero, data_nascimento, id_cuidador
             )
 
         finally:
             conn.close()
 
-        return """
-        <h1>Bebé registrado com sucesso!</h1>
-        <p>Os dados foram guardados.</p>
-        
-        <a href="/novo/bebe">Registar outro bebé</a>
-        <br><br>
-        <a href="/">Voltar à página inicial</a>
-        """
+        return render_template("bebe_sucesso.html")
 
-    return """
-    <h1>Registrar Bebé</h1>
+    return render_template("bebe.html")
 
-    <form method="POST" action="/novo/bebe">
-        <label for="nome">
-        Nome:</label>
-        <input 
-        type="text" 
-        id="nome" 
-        name="nome" 
-        required>
-        <br><br>
-
-        <label for="sexo">Sexo:</label>
-        <select id="sexo" name="sexo" required>
-        <option value="">Seleciona uma opção</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Feminino">Feminino</option>
-        </select>
-        <br><br>
-
-        <label for="data_nascimento">
-            Data de nascimento:</label>
-        <input
-            type="date"
-            id="data_nascimento"
-            name="data_nascimento"
-            required>
-        <br><br>
-
-        <button type="submit">Guardar bebé</button>
-    </form>
-    <p><a href="/">Voltar à página inicial</a></p>
-    """
 
 @app.route("/consultar/bebes", methods=["GET"])
 def consultar_bebes():
@@ -367,7 +257,7 @@ def novo_alimentacao():
 
         data_minima_html = data_minima.strftime("%Y-%m-%dT%H:%M")
         data_maxima_html = agora.strftime("%Y-%m-%dT%H:%M")
-    
+
         if request.method == "POST":
 
             # Recebe os dados do formulário
@@ -422,7 +312,7 @@ def novo_alimentacao():
                 )
 
             if not limite_inferior <= data_hora <= agora:
-                return "<h1>A data deve estar dentro dos últimos 50 anos e não pode ser futura.</h1>", 400       
+                return "<h1>A data deve estar dentro dos últimos 50 anos e não pode ser futura.</h1>", 400
 
             # Inicializa os campos opcionais
             alimento = None
@@ -442,13 +332,13 @@ def novo_alimentacao():
                 ):
                     return "<h1>Selecione a mama utilizada.</h1>", 400
 
-                fim_texto = request.form.get("fim_amamentacao")
+                parou_de_mamar = request.form.get("fim_amamentacao")
 
-                if fim_texto:
+                if parou_de_mamar:
 
                     try:
                         fim_amamentacao = datetime.fromisoformat(
-                            fim_texto
+                            parou_de_mamar
                         )
 
                     except ValueError:
@@ -539,7 +429,7 @@ def novo_alimentacao():
             <br><br>
             <a href="/">Voltar à página inicial</a>
             """
-        
+
         bebes = Bebe.consultar_bebes(conn, session["id_cuidador"])
 
         if not bebes:
@@ -549,242 +439,42 @@ def novo_alimentacao():
             <a href="/novo/bebe">Registrar bebê</a>
             """
 
-        opcoes_bebes = ""
+        # Carrega o template alimentacao.html e apresenta
+        # o formulário de registro de alimentação no navegador
+        return render_template(
 
-        for bebe in bebes:
-            opcoes_bebes += (
-                f'<option value="{bebe[0]}">{bebe[1]}</option>'
-            )
+            # Nome do arquivo HTML que será apresentado
+            "alimentacao.html",
 
-        return f"""
-        <h1>Registrar Alimentação</h1>
+            # Envia a lista de bebês cadastrados pelo cuidador
+            # para preencher a lista de seleção no formulário
+            bebes=bebes,
 
-        <form method="POST" action="/novo/alimentacao">
+            # Envia a data mínima permitida para o campo de data e hora
+            data_minima_html=data_minima_html,
 
-            <label for="id_bebe">Bebê:</label>
-            <br>
-            <select id="id_bebe" name="id_bebe" required>
-                <option value="">Selecione o bebê</option>
-                {opcoes_bebes}
-            </select>
+            # Envia a data máxima permitida para o campo de data e hora
+            data_maxima_html=data_maxima_html
+        )
 
-            <br><br>
-
-            <label for="tipo_alimentacao">Tipo de Alimentação:</label>
-            <br>
-            <select id="tipo_alimentacao" name="tipo_alimentacao" required>
-                <option value="">Selecione uma opção</option>
-                <option value="amamentacao">Amamentação</option>
-                <option value="mamadeira">Mamadeira</option>
-                <option value="solidos">Sólidos</option>
-            </select>
-
-            <br><br>
-
-            <label for="data_hora">Data e hora:</label>
-
-            <br>
-
-            <input
-                type="datetime-local"
-                id="data_hora"
-                name="data_hora"
-                min="{data_minima_html}"
-                max="{data_maxima_html}"
-                required
-            >
-
-            <br><br>
-
-            <fieldset id="campos_amamentacao" hidden>
-                <legend>Detalhes da Amamentação</legend>
-
-                <label for="mama_lados">Mama utilizada:</label>
-                <br>
-                <select id="mama_lados" name="mama_lados">
-                    <option value="">Selecione uma opção</option>
-                    <option value="esquerda">Esquerda</option>
-                    <option value="direita">Direita</option>
-                    <option value="ambas">Ambas</option>
-                </select>
-
-                <br><br>
-
-                <label for="fim_amamentacao">Horário de término:</label>
-
-                <br>
-
-                <input
-                    type="datetime-local"
-                    id="fim_amamentacao"
-                    name="fim_amamentacao"
-                >
-
-            </fieldset>
-
-            <br>
-
-            <fieldset id="campos_mamadeira" hidden>
-                <legend>Detalhes da mamadeira</legend>
-
-                <label for="alimento_mamadeira">Alimento:</label>
-
-                <br>
-
-                <select id="alimento_mamadeira" name="alimento">
-                    <option value="">Selecione uma opção</option>
-                    <option value="leite_materno">Leite materno</option>
-                    <option value="formula">Fórmula</option>
-                </select>
-
-                <br>
-
-                <label for="quantidade_mamadeira">Quantidade:</label>
-                <br>
-                <input
-                    type="number"
-                    id="quantidade_mamadeira"
-                    name="quantidade"
-                    min="10"
-                    step="1"
-                >
-
-                <input type="hidden" name="ml_ou_g" value="ml">
-
-                <span>ml</span>
-
-            </fieldset>            
-            
-            <fieldset id="campos_solidos" hidden>
-                <legend>Detalhes dos alimentos sólidos</legend>
-
-                <label for="alimento_solido">Alimento:</label>
-                <br>
-                <input
-                    type="text"
-                    id="alimento_solido"
-                    name="alimento"
-                    placeholder="Ex.: Papa de legumes"
-                >
-
-                <br><br>
-
-                <label for="quantidade_solidos">Quantidade:</label>
-                <br>
-                <input
-                    type="number"
-                    id="quantidade_solidos"
-                    name="quantidade"
-                    min="10"
-                    step="1"
-                >
-
-                <input type="hidden" name="ml_ou_g" value="g">
-
-                <span>g</span>
-
-                <br><br>
-
-                <label for="aceitacao">Aceitação:</label>
-                <br>
-                <select id="aceitacao" name="aceitacao">
-                    <option value="">Selecione uma opção</option>
-                    <option value="tudo">Tudo</option>
-                    <option value="suficiente">Suficiente</option>
-                    <option value="pouco">Pouco</option>
-                </select>
-
-            </fieldset>
-
-                <br>
-                
-                <label for="notas">Observações:</label>
-                <br>
-                <textarea
-                    id="notas"
-                    name="notas"
-                    rows="3"
-                    placeholder="Adicione alguma observação..."
-                ></textarea>
-
-                <br><br>
-
-            <button type="submit">Salvar</button>
-
-        </form>
-
-        <script>
-            const tipoAlimentacao = document.getElementById("tipo_alimentacao");
-
-            const camposAmamentacao = document.getElementById("campos_amamentacao");
-            const camposMamadeira = document.getElementById("campos_mamadeira");
-            const camposSolidos = document.getElementById("campos_solidos");
-
-            function atualizarCampos() {{
-
-                camposAmamentacao.hidden = true;
-                camposMamadeira.hidden = true;
-                camposSolidos.hidden = true;
-
-                const grupos = [
-                    camposAmamentacao,
-                    camposMamadeira,
-                    camposSolidos
-                ];
-
-                grupos.forEach(grupo => {{
-                    grupo.querySelectorAll("input, select").forEach(campo => {{
-                        campo.disabled = true;
-                        campo.required = false;
-                    }});
-                }});
-
-                let grupoAtivo;
-
-                if (tipoAlimentacao.value === "amamentacao") {{
-                    grupoAtivo = camposAmamentacao;
-                }} else if (tipoAlimentacao.value === "mamadeira") {{
-                    grupoAtivo = camposMamadeira;
-                }} else if (tipoAlimentacao.value === "solidos") {{
-                    grupoAtivo = camposSolidos;
-                }}
-
-                if (grupoAtivo) {{
-                grupoAtivo.hidden = false;
-
-                grupoAtivo.querySelectorAll("input, select").forEach(campo => {{
-                    campo.disabled = false;
-                }});
-
-                if (grupoAtivo === camposAmamentacao) {{
-                    document.getElementById("mama_lados").required = true;
-                }}
-
-                else if (grupoAtivo === camposMamadeira) {{
-                    document.getElementById("alimento_mamadeira").required = true;
-                    document.getElementById("quantidade_mamadeira").required = true;
-                }}
-
-                else if (grupoAtivo === camposSolidos) {{
-                    document.getElementById("alimento_solido").required = true;
-                    document.getElementById("quantidade_solidos").required = true;
-                    document.getElementById("aceitacao").required = true;
-                }}
-            }}
-        }}
-
-        tipoAlimentacao.addEventListener("change", atualizarCampos);
-
-        atualizarCampos();
-
-        </script>
-        """
 
     finally:
         conn.close()
 
 
 if __name__ == "__main__":
+
+    # Cria as tabelas necessárias no banco de dados
     criar_tabelas()
+
+    # Verifica se o modo de depuração está ativado
+    # através da variável de ambiente FLASK_DEBUG
     modo_debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
-    app.run(debug=modo_debug)
+
+    # Inicia o servidor Flask
+    app.run(
+        host="127.0.0.1",
+        port=5001,
+        debug=modo_debug
+    )
+

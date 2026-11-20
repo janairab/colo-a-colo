@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Alimentação | Colo a Colo</title>
+</head>
+<body>
+
+    <h1>Registrar Alimentação</h1>
+
+    <form method="POST" action="/novo/alimentacao">
+
+        <label for="id_bebe">Bebê:</label>
+        <br>
+        <select id="id_bebe" name="id_bebe" required>
+            <option value="">Selecione o bebê</option>
+
+            <!-- Jinja monta as opções dos bebês dentro do HTML -->
+            {% for bebe in bebes %}
+                <!-- bebe[0]: identifica o bebê pelo ID -->
+                <option value="{{ bebe[0] }}">{{ bebe[1] }}</option>
+                <!-- bebe[1]: apresenta o nome do bebê. -->
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <label for="tipo_alimentacao">Tipo de Alimentação:</label>
+        <br>
+        <select id="tipo_alimentacao" name="tipo_alimentacao" required>
+            <option value="">Selecione uma opção</option>
+            <option value="amamentacao">Amamentação</option>
+            <option value="mamadeira">Mamadeira</option>
+            <option value="solidos">Sólidos</option>
+        </select>
+
+        <br><br>
+
+        <label for="data_hora">Data e hora:</label>
+        <br>
+
+        <input
+            type="datetime-local"
+            id="data_hora"
+            name="data_hora"
+            min="{{ data_minima_html }}"
+            max="{{ data_maxima_html }}"
+            required
+        >
+
+        <br><br>
+
+        <fieldset id="campos_amamentacao" hidden>
+            <legend>Detalhes da Amamentação</legend>
+
+            <label for="mama_lados">Mama utilizada:</label>
+            <br>
+            <select id="mama_lados" name="mama_lados">
+                <option value="">Selecione uma opção</option>
+                <option value="esquerda">Esquerda</option>
+                <option value="direita">Direita</option>
+                <option value="ambas">Ambas</option>
+            </select>
+
+            <br><br>
+
+            <label for="fim_amamentacao">Horário de término:</label>
+            <br>
+
+            <input
+                type="datetime-local"
+                id="fim_amamentacao"
+                name="fim_amamentacao"
+            >
+
+        </fieldset>
+
+        <br>
+
+        <fieldset id="campos_mamadeira" hidden>
+            <legend>Detalhes da mamadeira</legend>
+
+            <label for="alimento_mamadeira">Alimento:</label>
+            <br>
+
+            <select id="alimento_mamadeira" name="alimento">
+                <option value="">Selecione uma opção</option>
+                <option value="leite_materno">Leite materno</option>
+                <option value="formula">Fórmula</option>
+            </select>
+
+            <br>
+
+            <label for="quantidade_mamadeira">Quantidade:</label>
+            <br>
+
+            <input
+                type="number"
+                id="quantidade_mamadeira"
+                name="quantidade"
+                min="10"
+                step="0.1"
+            >
+
+            <input type="hidden" name="ml_ou_g" value="ml">
+
+            <span>ml</span>
+
+        </fieldset>
+
+        <fieldset id="campos_solidos" hidden>
+            <legend>Detalhes dos alimentos sólidos</legend>
+
+            <label for="alimento_solido">Alimento:</label>
+            <br>
+
+            <input
+                type="text"
+                id="alimento_solido"
+                name="alimento"
+                placeholder="Ex.: Papa de legumes"
+            >
+
+            <br><br>
+
+            <label for="quantidade_solidos">Quantidade:</label>
+            <br>
+
+            <input
+                type="number"
+                id="quantidade_solidos"
+                name="quantidade"
+                min="10"
+                step="0.1"
+            >
+
+            <input type="hidden" name="ml_ou_g" value="g">
+
+            <span>g</span>
+
+            <br><br>
+
+            <label for="aceitacao">Aceitação:</label>
+            <br>
+
+            <select id="aceitacao" name="aceitacao">
+                <option value="">Selecione uma opção</option>
+                <option value="tudo">Tudo</option>
+                <option value="suficiente">Suficiente</option>
+                <option value="pouco">Pouco</option>
+            </select>
+
+        </fieldset>
+
+        <br>
+
+        <label for="notas">Observações:</label>
+        <br>
+
+        <textarea
+            id="notas"
+            name="notas"
+            rows="3"
+            placeholder="Adicione alguma observação..."
+        ></textarea>
+
+        <br><br>
+
+        <button type="submit">Salvar</button>
+
+        <p>
+            <a href="/">Voltar à página inicial</a>
+        </p>
+
+    </form>
+
+    <script>
+        const tipoAlimentacao = document.getElementById("tipo_alimentacao");
+
+        const camposAmamentacao = document.getElementById("campos_amamentacao");
+        const camposMamadeira = document.getElementById("campos_mamadeira");
+        const camposSolidos = document.getElementById("campos_solidos");
+
+        function atualizarCampos() {
+
+            camposAmamentacao.hidden = true;
+            camposMamadeira.hidden = true;
+            camposSolidos.hidden = true;
+
+            const grupos = [
+                camposAmamentacao,
+                camposMamadeira,
+                camposSolidos
+            ];
+
+            grupos.forEach(grupo => {
+                grupo.querySelectorAll("input, select").forEach(campo => {
+                    campo.disabled = true;
+                    campo.required = false;
+                });
+            });
+
+            let grupoAtivo;
+
+            if (tipoAlimentacao.value === "amamentacao") {
+                grupoAtivo = camposAmamentacao;
+            } else if (tipoAlimentacao.value === "mamadeira") {
+                grupoAtivo = camposMamadeira;
+            } else if (tipoAlimentacao.value === "solidos") {
+                grupoAtivo = camposSolidos;
+            }
+
+            if (grupoAtivo) {
+                grupoAtivo.hidden = false;
+
+                grupoAtivo.querySelectorAll("input, select").forEach(campo => {
+                    campo.disabled = false;
+                });
+
+                if (grupoAtivo === camposAmamentacao) {
+                    document.getElementById("mama_lados").required = true;
+                }
+
+                else if (grupoAtivo === camposMamadeira) {
+                    document.getElementById("alimento_mamadeira").required = true;
+                    document.getElementById("quantidade_mamadeira").required = true;
+                }
+
+                else if (grupoAtivo === camposSolidos) {
+                    document.getElementById("alimento_solido").required = true;
+                    document.getElementById("quantidade_solidos").required = true;
+                    document.getElementById("aceitacao").required = true;
+                }
+            }
+        }
+
+        tipoAlimentacao.addEventListener("change", atualizarCampos);
+
+        atualizarCampos();
+
+    </script>
+
+</body>
+</html>

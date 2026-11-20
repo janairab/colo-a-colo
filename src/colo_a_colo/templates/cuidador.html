@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Registrar Cuidador | Colo a Colo</title>
+
+</head>
+<body>
+
+    <!-- Título principal da página -->
+    <h1>Registrar Cuidador</h1>
+
+    <!--
+        Formulário para cadastrar um cuidador.
+        O método POST envia os dados para a rota /novo/cuidador.
+    -->
+    <form method="POST" action="/novo/cuidador">
+
+        <!-- Campo para informar o nome do cuidador -->
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <br><br>
+
+        <!-- Campo para informar o email do cuidador -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+
+        <!-- Campo para informar a data de nascimento -->
+        <label for="data_nascimento">Data de nascimento:</label>
+
+        <input
+            type="date"
+            id="data_nascimento"
+            name="data_nascimento"
+            required
+        >
+        <br><br>
+
+        <!-- Campo para criar a palavra-passe -->
+        <label for="password">Palavra-passe:</label>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            required
+        >
+        <br><br>
+
+        <!-- Envia os dados do formulário para o Flask -->
+        <button type="submit">Registrar cuidador</button>
+
+    </form>
+
+    <!-- Retorna à página inicial -->
+    <p><a href="/">Voltar à página inicial</a></p>
+
+    <!--
+        Script responsável por definir os limites
+        de idade permitidos no campo de data de nascimento.
+    -->
+    <script>
+
+        // Obtém o campo de data de nascimento do formulário
+        const campoData = document.getElementById("data_nascimento");
+
+        // Obtém a data atual
+        const hoje = new Date();
+
+        // Calcula a data mínima permitida:
+        // uma pessoa que tenha 70 anos completos.
+        const dataMinima = new Date(
+            hoje.getFullYear() - 70,
+            hoje.getMonth(),
+            hoje.getDate()
+        );
+
+        // Calcula a data máxima permitida:
+        // uma pessoa que tenha pelo menos 18 anos completos.
+        const dataMaxima = new Date(
+            hoje.getFullYear() - 18,
+            hoje.getMonth(),
+            hoje.getDate()
+        );
+
+        // Converte uma data para o formato AAAA-MM-DD,
+        // necessário para os atributos min e max do input date.
+        function formatarData(data) {
+
+            // Obtém o ano da data
+            const ano = data.getFullYear();
+
+            // Obtém o mês e acrescenta zero à esquerda, se necessário
+            const mes = String(data.getMonth() + 1).padStart(2, "0");
+
+            // Obtém o dia e acrescenta zero à esquerda, se necessário
+            const dia = String(data.getDate()).padStart(2, "0");
+
+            // Retorna a data no formato esperado pelo campo HTML
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        // Define a data mínima permitida no formulário
+        campoData.min = formatarData(dataMinima);
+
+        // Define a data máxima permitida no formulário
+        campoData.max = formatarData(dataMaxima);
+
+    </script>
+
+</body>
+</html>
