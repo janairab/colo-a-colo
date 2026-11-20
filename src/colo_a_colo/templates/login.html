@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Iniciar sessão | Colo a Colo</title>
+
+</head>
+<body>
+
+    <!-- Título principal da página -->
+    <h1>Iniciar sessão</h1>
+
+    <!--
+        Verifica se existe uma mensagem de erro enviada pela rota.
+        Se existir, apresenta a mensagem ao usuário.
+    -->
+    {% if erro %}
+        <p>{{ erro }}</p>
+    {% endif %}
+
+    <!--
+        Formulário de autenticação do cuidador.
+        O método POST envia os dados para a rota /login.
+    -->
+    <form method="POST" action="/login">
+
+        <!-- Campo para informar o email cadastrado -->
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <br><br>
+
+        <!-- Campo para informar a senha do cuidador -->
+        <label for="password">Palavra-passe:</label>
+        <input type="password" id="password" name="password" required>
+        <br><br>
+
+        <!-- Envia os dados para o Flask realizar a autenticação -->
+        <button type="submit">Entrar</button>
+
+    </form>
+
+    <!-- Retorna à página inicial -->
+    <p><a href="/">Voltar à página inicial</a></p>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Registrar Banho | Colo a Colo</title>
+</head>
+<body>
+
+    <!-- Título da página -->
+    <h1>Registrar Banho</h1>
+
+    <!--
+        Formulário para registrar o banho do bebê.
+        O método POST envia os dados para a rota /novo/banho.
+    -->
+    <form method="POST" action="/novo/banho">
+
+        <!-- Seleção do bebê que tomou banho -->
+        <label for="id_bebe">Bebê:</label>
+        <br>
+
+        <select id="id_bebe" name="id_bebe" required>
+            <option value="">Selecione o bebê</option>
+
+            <!--
+                Percorre a lista de bebês recebida do Flask.
+                bebe[0]: ID do bebê, utilizado como valor da opção.
+                bebe[1]: nome do bebê, apresentado ao cuidador.
+            -->
+            {% for bebe in bebes %}
+                <option value="{{ bebe[0] }}">{{ bebe[1] }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <!-- Data e hora em que o banho aconteceu -->
+        <label for="data_hora">Data e hora:</label>
+        <br>
+
+        <input
+            type="datetime-local"
+            id="data_hora"
+            name="data_hora"
+            min="{{ data_minima_html }}"
+            max="{{ data_maxima_html }}"
+            required
+        >
+
+        <br><br>
+
+        <!-- Campo opcional para registrar observações sobre o banho -->
+        <label for="notas">Observações:</label>
+        <br>
+
+        <textarea
+            id="notas"
+            name="notas"
+            rows="3"
+            placeholder="Adicione alguma observação..."
+        ></textarea>
+
+        <br><br>
+
+        <!-- Envia os dados preenchidos para a rota do Flask -->
+        <button type="submit">Salvar</button>
+
+        <!-- Retorna à página inicial -->
+        <p><a href="/">Voltar à página inicial</a></p>
+
+    </form>
+
+</body>
+</html>

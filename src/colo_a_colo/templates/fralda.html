@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <!-- Define a codificação de caracteres para aceitar acentos -->
+    <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Título apresentado na aba do navegador -->
+    <title>Registrar Fralda | Colo a Colo</title>
+</head>
+<body>
+
+    <!-- Título da página -->
+    <h1>Registrar Troca de Fralda</h1>
+
+    <!-- Formulário para registrar a troca de fralda do bebê -->
+    <form method="POST" action="/novo/fralda">
+
+        <!-- Seleção do bebê -->
+        <label for="id_bebe">Bebê:</label>
+        <br>
+
+        <select id="id_bebe" name="id_bebe" required>
+            <option value="">Selecione o bebê</option>
+
+            <!-- Percorre a lista de bebês recebida do Flask -->
+            {% for bebe in bebes %}
+                <option value="{{ bebe[0] }}">{{ bebe[1] }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <!-- Data e hora em que ocorreu a troca da fralda -->
+        <label for="data_hora">Data e hora:</label>
+        <br>
+
+        <input
+            type="datetime-local"
+            id="data_hora"
+            name="data_hora"
+            min="{{ data_minima_html }}"
+            max="{{ data_maxima_html }}"
+            required
+        >
+
+        <br><br>
+
+
+        <!-- Seleção do que foi encontrado na fralda -->
+        <p>O que havia na fralda?</p>
+
+        <!-- Permite selecionar xixi -->
+        <input
+            type="checkbox"
+            id="xixi"
+            name="tipo_eliminacao"
+            value="xixi"
+        >
+        <label for="xixi">Xixi</label>
+
+        <br>
+
+        <!-- Permite selecionar cocô -->
+        <input
+            type="checkbox"
+            id="coco"
+            name="tipo_eliminacao"
+            value="coco"
+        >
+        <label for="coco">Cocô</label>
+
+
+        <br><br>
+
+        <!-- Campo opcional para observações -->
+        <label for="notas">Observações:</label>
+        <br>
+
+        <textarea
+            id="notas"
+            name="notas"
+            rows="3"
+            placeholder="Adicione alguma observação..."
+        ></textarea>
+
+        <br><br>
+
+        <!-- Envia os dados do formulário -->
+        <button type="submit">Salvar</button>
+
+        <!-- Retorna à página inicial -->
+        <p><a href="/">Voltar à página inicial</a></p>
+
+    </form>
+
+</body>
+</html>
