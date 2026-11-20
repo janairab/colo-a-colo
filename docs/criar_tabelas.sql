@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS "cuidador" (
 	"password_hash" TEXT NOT NULL
 );
 
-/* Criar tabela Bebé */
+/* Criar tabela Bebê */
 CREATE TABLE IF NOT EXISTS "bebe" (
 	"id_bebe" INTEGER PRIMARY KEY,
 	"nome" VARCHAR(50) NOT NULL,
@@ -61,12 +61,22 @@ CREATE TABLE IF NOT EXISTS "alimentacao" (
 
 /* Criar tabela fralda */
 CREATE TABLE IF NOT EXISTS "fralda" (
-	"id_registro" INTEGER PRIMARY KEY,
-	"miccao" VARCHAR(25),
-	"coco" VARCHAR(25),
-	"notas" TEXT,
-	FOREIGN KEY ("id_registro")	
-    REFERENCES "registro_rotina"("id_registro")
+    "id_registro" INTEGER PRIMARY KEY,
+
+    -- Indica se houve xixi: 0 = não, 1 = sim
+    "xixi" INTEGER NOT NULL DEFAULT 0
+    CHECK ("xixi" IN (0, 1)),
+
+    -- Indica se houve cocô: 0 = não, 1 = sim
+    "coco" INTEGER NOT NULL DEFAULT 0
+    CHECK ("coco" IN (0, 1)),
+
+    -- Impede registrar uma troca sem nenhuma eliminação selecionada
+    CHECK ("xixi" = 1 OR "coco" = 1),
+
+    -- Relaciona o registro da fralda ao registro da rotina
+    FOREIGN KEY ("id_registro")
+        REFERENCES "registro_rotina"("id_registro")
 );
 
 
