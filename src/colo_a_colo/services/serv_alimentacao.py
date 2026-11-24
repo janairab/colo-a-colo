@@ -22,18 +22,17 @@ def registrar_alimentacao_completa(
     with conn:
 
         # Registra primeiro a rotina e recebe o ID criado
-        id_registro = Rotina.registrar_rotina(
+        id_rotina = Rotina.registrar_rotina(
             conn,
             id_bebe,
             "alimentacao",
-            data_hora,
-            notas
+            data_hora
         )
 
         # Registra os detalhes da alimentação usando o ID da rotina
         Alimentacao.registrar_alimentacao(
             conn,
-            id_registro,
+            id_rotina,
             tipo_alimentacao,
             alimento,
             fim_amamentacao,
@@ -44,5 +43,5 @@ def registrar_alimentacao_completa(
             notas
         )
 
-    # Devolve o ID do registro criado
-    return id_registro
+    # Devolve o ID da rotina criada
+    return id_rotina

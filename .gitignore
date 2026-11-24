@@ -3,4 +3,6 @@ __pycache__/
 .venv
 .venv_antigo
 *.egg-info/
-docs
+docs/**
+!docs/criar_tabelas.sql
+data/colo_a_colo.db

@@ -1,4 +1,3 @@
-
 from flask import Blueprint, request, session, redirect, url_for, render_template
 
 from colo_a_colo.database import get_db

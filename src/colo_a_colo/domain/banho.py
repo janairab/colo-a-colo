@@ -1,18 +1,19 @@
+
 class Banho:
 
     @staticmethod
-    def registrar_banho(conn, id_registro, notas=None):
+    def registrar_banho(conn, id_rotina, notas=None):
 
-        """Registra um banho na base de dados"""
+        """Registra os dados de um banho na base de dados"""
 
         # Cria o cursor para executar comandos SQL
         cursor = conn.cursor()
 
-        # executa a consulta SQL
+        # Insere os dados do banho e associa à rotina
         cursor.execute("""
-            INSERT INTO banho (id_registro, notas)
+            INSERT INTO banho (id_rotina, notas)
             VALUES (?, ?)
-        """, (id_registro, notas))
+        """, (id_rotina, notas))
 
-        # Retorna o ID do registro associado
-        return id_registro
+        # Retorna o ID da rotina associado ao banho
+        return id_rotina

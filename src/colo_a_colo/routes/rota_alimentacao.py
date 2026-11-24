@@ -1,13 +1,14 @@
+
 # Importa os recursos necessários do Flask
 from flask import Blueprint, request, session, redirect, url_for, render_template
-# session: guarda a identificação do cuidador que iniciou sessão
-# redirect e url_for: permitem encaminhar o utilizador para outra página
-# carregar um arquivo HTML da pasta templates e apresentá-lo ao usuário pelo navegador, ela permite separar o HTML do código Python.
 
-# Importa datetime para trabalhar com datas e horários
+# Importa math para validar números
+import math
+
+# Importa datetime e timedelta para trabalhar com datas e horários
 from datetime import datetime, timedelta
 
-# Importa a função responsável por abrir a ligação com o banco de dados
+# Importa a função responsável por abrir a conexão com o banco de dados
 from colo_a_colo.database import get_db
 
 # Importa a classe responsável pelas consultas relacionadas aos bebês
@@ -16,24 +17,31 @@ from colo_a_colo.domain.bebe import Bebe
 # Importa a função que registra a rotina e os dados da alimentação na mesma transação
 from colo_a_colo.services.serv_alimentacao import registrar_alimentacao_completa
 
+
 # Cria um Blueprint para agrupar as rotas relacionadas à alimentação
 alimentacao_bp = Blueprint("alimentacao", __name__)
+
 
 # Define a rota para registrar uma alimentação
 # GET apresenta o formulário e POST recebe os dados enviados
 @alimentacao_bp.route("/novo/alimentacao", methods=["GET", "POST"])
-def novo_alimentacao():
+def nova_alimentacao():
 
     # Verifica se existe um cuidador com sessão iniciada
     if "id_cuidador" not in session:
         return redirect(url_for("cuidador.iniciar_sessao"))
 
-    # Abre a ligação com o banco de dados
+    # Recebe os dados enviados pela rota de rotina
+    id_bebe = request.args.get("id_bebe")
+    data_hora = request.args.get("data_hora")
+    notas = request.args.get("notas", "")
+
+    # Abre a conexão com o banco de dados
     conn = get_db()
 
     try:
 
-        # Obtém a data e a hora atuais
+        # Obtém a data e a hora atuais para realizar as validações
         agora = datetime.now()
 
         # Calcula a data mínima permitida, considerando os últimos 50 anos
@@ -54,23 +62,36 @@ def novo_alimentacao():
         # Verifica se o formulário foi enviado
         if request.method == "POST":
 
-            # Recebe os dados enviados pelo formulário
-            id_bebe = request.form.get("id_bebe")
+            # Recebe o tipo de alimentação selecionado no formulário
             tipo_alimentacao = request.form.get("tipo_alimentacao")
-
-            # Valida o ID do bebê
-            try:
-                id_bebe = int(id_bebe)
-
-            # Apresenta um erro caso o ID não seja um número válido
-            except (ValueError, TypeError):
-                return "<h1>Bebê inválido</h1>", 400
 
             # Verifica se o tipo de alimentação corresponde a uma opção permitida
             if tipo_alimentacao not in (
                 "amamentacao", "mamadeira", "solidos"
             ):
                 return "<h1>Tipo de alimentação inválida</h1>", 400
+
+            # Recebe o ID do bebê enviado pelo formulário
+            id_bebe = request.form.get("id_bebe")
+
+            # Verifica se o ID do bebê é um número inteiro
+            try:
+                id_bebe = int(id_bebe)
+
+            # Impede o registro caso o ID seja inválido
+            except (TypeError, ValueError):
+                return "<h1>Selecione um bebê válido</h1>", 400
+
+            # Recebe a data e a hora enviadas pelo formulário
+            data_hora_texto = request.form.get("data_hora", "")
+
+            # Converte a data e a hora recebidas para um objeto datetime
+            try:
+                data_hora = datetime.fromisoformat(data_hora_texto)
+
+            # Apresenta um erro caso a data e a hora sejam inválidas
+            except ValueError:
+                return "<h1>Informe uma data e hora válidas</h1>", 400
 
             # Verifica se o bebê pertence ao cuidador que iniciou a sessão
             cursor = conn.cursor()
@@ -86,16 +107,6 @@ def novo_alimentacao():
             # Impede o registro caso o bebê não pertença ao cuidador
             if not bebe:
                 return "<h1>Bebê inválido</h1>", 400
-
-            # Recebe e converte a data e a hora informadas no formulário
-            try:
-                data_hora = datetime.fromisoformat(
-                    request.form.get("data_hora", "")
-                )
-
-            # Apresenta um erro caso a data ou a hora sejam inválidas
-            except ValueError:
-                return "<h1>Data e hora inválidas</h1>", 400
 
             # Atualiza a data e a hora atuais para realizar as validações
             agora = datetime.now()
@@ -114,7 +125,10 @@ def novo_alimentacao():
             # Verifica se a alimentação está dentro do período permitido
             # A data não pode ser anterior ao limite nem posterior ao momento atual
             if not limite_inferior <= data_hora <= agora:
-                return "<h1>A data deve estar dentro dos últimos 50 anos e não pode ser futura</h1>", 400
+                return (
+                    "<h1>A data deve estar dentro dos últimos 50 anos e não pode ser futura</h1>",
+                    400
+                )
 
             # Inicializa os campos opcionais antes de validar cada tipo de alimentação
             alimento = None
@@ -137,7 +151,7 @@ def novo_alimentacao():
                     return "<h1>Selecione a mama utilizada</h1>", 400
 
                 # Recebe o horário de término, caso tenha sido informado
-                parou_de_mamar = request.form.get("fim_amamentacao")
+                parou_de_mamar = request.form.get("fim_amamentacao", "")
 
                 # O término é opcional, pois a amamentação pode ainda estar em andamento
                 if parou_de_mamar:
@@ -193,11 +207,11 @@ def novo_alimentacao():
                     )
 
                 # Apresenta um erro caso a quantidade não seja válida
-                except ValueError:
+                except (TypeError, ValueError):
                     return "<h1>Informe uma quantidade válida</h1>", 400
 
-                # Verifica se a quantidade é maior que zero
-                if quantidade <= 0:
+                # Verifica se a quantidade é um número finito e maior que zero
+                if not math.isfinite(quantidade) or quantidade <= 0:
                     return "<h1>A quantidade deve ser maior que zero</h1>", 400
 
                 # Define a unidade de medida utilizada na mamadeira
@@ -220,11 +234,11 @@ def novo_alimentacao():
                     )
 
                 # Apresenta um erro caso a quantidade não seja válida
-                except ValueError:
+                except (TypeError, ValueError):
                     return "<h1>Informe uma quantidade válida</h1>", 400
 
-                # Verifica se a quantidade é maior que zero
-                if quantidade <= 0:
+                # Verifica se a quantidade é um número finito e maior que zero
+                if not math.isfinite(quantidade) or quantidade <= 0:
                     return "<h1>A quantidade deve ser maior que zero</h1>", 400
 
                 # Define a unidade de medida utilizada nos alimentos sólidos
@@ -237,8 +251,8 @@ def novo_alimentacao():
                 if aceitacao not in ("tudo", "suficiente", "pouco"):
                     return "<h1>Selecione a aceitação</h1>", 400
 
-            # Recebe as observações, caso tenham sido preenchidas
-            notas = request.form.get("notas") or None
+            # Recebe as observações e remove espaços desnecessários
+            notas = request.form.get("notas", "").strip() or None
 
             # Registra a alimentação e a rotina na mesma transação
             registrar_alimentacao_completa(
@@ -265,7 +279,10 @@ def novo_alimentacao():
             """
 
         # Consulta os bebês pertencentes ao cuidador que iniciou a sessão
-        bebes = Bebe.consultar_bebes(conn, session["id_cuidador"])
+        bebes = Bebe.consultar_bebes(
+            conn,
+            session["id_cuidador"]
+        )
 
         # Verifica se o cuidador já possui algum bebê cadastrado
         if not bebes:
@@ -277,8 +294,6 @@ def novo_alimentacao():
 
         # Carrega o template alimentacao.html e apresenta o formulário no navegador
         return render_template(
-
-            # Indica o nome do arquivo HTML que será apresentado
             "alimentacao.html",
 
             # Envia a lista de bebês para preencher o campo de seleção
@@ -288,9 +303,22 @@ def novo_alimentacao():
             data_minima_html=data_minima_html,
 
             # Envia a data máxima permitida para o formulário
-            data_maxima_html=data_maxima_html
+            data_maxima_html=data_maxima_html,
+
+            # Envia o ID do bebê recebido pela rota de rotina
+            id_bebe=id_bebe,
+
+            # Envia a data e a hora recebidas pela rota de rotina
+            data_hora=(
+                data_hora.strftime("%Y-%m-%dT%H:%M")
+                if isinstance(data_hora, datetime)
+                else data_hora
+            ),
+
+            # Envia as notas recebidas pela rota de rotina
+            notas=notas
         )
 
-    # Garante que a ligação com o banco de dados seja fechada
+    # Garante que a conexão com o banco de dados seja fechada
     finally:
         conn.close()
