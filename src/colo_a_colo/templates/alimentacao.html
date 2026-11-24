@@ -2,43 +2,68 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <!-- Define a codificação de caracteres para aceitar acentos -->
     <meta charset="UTF-8">
+
+    <!-- Ajusta a página para diferentes tamanhos de tela -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Define o título apresentado na aba do navegador -->
     <title>Registrar Alimentação | Colo a Colo</title>
 </head>
 <body>
 
+    <!-- Apresenta o título da página -->
     <h1>Registrar Alimentação</h1>
 
+    <!-- Envia os dados do formulário para a rota de alimentação -->
     <form method="POST" action="/novo/alimentacao">
 
+        <!-- Permite selecionar o bebê que receberá o registro -->
         <label for="id_bebe">Bebê:</label>
         <br>
+
         <select id="id_bebe" name="id_bebe" required>
+
+            <!-- Apresenta a opção inicial do campo -->
             <option value="">Selecione o bebê</option>
 
-            <!-- Jinja monta as opções dos bebês dentro do HTML -->
+            <!-- Percorre a lista de bebês recebida pela rota Python -->
             {% for bebe in bebes %}
-                <!-- bebe[0]: identifica o bebê pelo ID -->
-                <option value="{{ bebe[0] }}">{{ bebe[1] }}</option>
-                <!-- bebe[1]: apresenta o nome do bebê. -->
+
+                <!-- Apresenta cada bebê e seleciona aquele recebido pela rota de rotina -->
+                <option
+                    value="{{ bebe[0] }}"
+                    {% if id_bebe and bebe[0] == id_bebe|int %}selected{% endif %}
+                >
+                    {{ bebe[1] }}
+                </option>
+
             {% endfor %}
 
         </select>
 
         <br><br>
 
+        <!-- Permite escolher o tipo de alimentação -->
         <label for="tipo_alimentacao">Tipo de Alimentação:</label>
         <br>
+
         <select id="tipo_alimentacao" name="tipo_alimentacao" required>
+
+            <!-- Apresenta a opção inicial do campo -->
             <option value="">Selecione uma opção</option>
+
+            <!-- Opções de alimentação disponíveis -->
             <option value="amamentacao">Amamentação</option>
             <option value="mamadeira">Mamadeira</option>
             <option value="solidos">Sólidos</option>
+
         </select>
 
         <br><br>
 
+        <!-- Permite informar a data e a hora do início da alimentação -->
         <label for="data_hora">Data e hora:</label>
         <br>
 
@@ -46,6 +71,7 @@
             type="datetime-local"
             id="data_hora"
             name="data_hora"
+            value="{{ data_hora or '' }}"
             min="{{ data_minima_html }}"
             max="{{ data_maxima_html }}"
             required
@@ -53,16 +79,24 @@
 
         <br><br>
 
+        <!-- Agrupa os campos específicos da amamentação -->
         <fieldset id="campos_amamentacao" hidden>
+
             <legend>Detalhes da Amamentação</legend>
 
+            <!-- Permite informar qual mama foi utilizada -->
             <label for="mama_lados">Mama utilizada:</label>
             <br>
+
             <select id="mama_lados" name="mama_lados">
+
+                <!-- Apresenta a opção inicial do campo -->
                 <option value="">Selecione uma opção</option>
+
                 <option value="esquerda">Esquerda</option>
                 <option value="direita">Direita</option>
                 <option value="ambas">Ambas</option>
+
             </select>
 
             <br><br>
@@ -81,20 +115,28 @@
 
         <br>
 
+        <!-- Agrupa os campos específicos da mamadeira -->
         <fieldset id="campos_mamadeira" hidden>
-            <legend>Detalhes da mamadeira</legend>
 
+            <legend>Detalhes da Mamadeira</legend>
+
+            <!-- Permite selecionar o tipo de leite utilizado -->
             <label for="alimento_mamadeira">Alimento:</label>
             <br>
 
             <select id="alimento_mamadeira" name="alimento">
+
+                <!-- Apresenta a opção inicial do campo -->
                 <option value="">Selecione uma opção</option>
+
                 <option value="leite_materno">Leite materno</option>
                 <option value="formula">Fórmula</option>
+
             </select>
 
-            <br>
+            <br><br>
 
+            <!-- Permite informar a quantidade de leite oferecida -->
             <label for="quantidade_mamadeira">Quantidade:</label>
             <br>
 
@@ -102,19 +144,23 @@
                 type="number"
                 id="quantidade_mamadeira"
                 name="quantidade"
-                min="10"
+                min="0.1"
                 step="0.1"
             >
 
-            <input type="hidden" name="ml_ou_g" value="ml">
-
+            <!-- Identifica a unidade de medida da quantidade -->
             <span>ml</span>
 
         </fieldset>
 
-        <fieldset id="campos_solidos" hidden>
-            <legend>Detalhes dos alimentos sólidos</legend>
+        <br>
 
+        <!-- Agrupa os campos específicos dos alimentos sólidos -->
+        <fieldset id="campos_solidos" hidden>
+
+            <legend>Detalhes dos Alimentos Sólidos</legend>
+
+            <!-- Permite informar o nome do alimento oferecido -->
             <label for="alimento_solido">Alimento:</label>
             <br>
 
@@ -127,6 +173,7 @@
 
             <br><br>
 
+            <!-- Permite informar a quantidade de alimento oferecida -->
             <label for="quantidade_solidos">Quantidade:</label>
             <br>
 
@@ -134,30 +181,35 @@
                 type="number"
                 id="quantidade_solidos"
                 name="quantidade"
-                min="10"
+                min="0.1"
                 step="0.1"
             >
 
-            <input type="hidden" name="ml_ou_g" value="g">
-
+            <!-- Identifica a unidade de medida da quantidade -->
             <span>g</span>
 
             <br><br>
 
+            <!-- Permite informar a aceitação da refeição -->
             <label for="aceitacao">Aceitação:</label>
             <br>
 
             <select id="aceitacao" name="aceitacao">
+
+                <!-- Apresenta a opção inicial do campo -->
                 <option value="">Selecione uma opção</option>
+
                 <option value="tudo">Tudo</option>
                 <option value="suficiente">Suficiente</option>
                 <option value="pouco">Pouco</option>
+
             </select>
 
         </fieldset>
 
         <br>
 
+        <!-- Permite acrescentar observações ao registro -->
         <label for="notas">Observações:</label>
         <br>
 
@@ -166,37 +218,46 @@
             name="notas"
             rows="3"
             placeholder="Adicione alguma observação..."
-        ></textarea>
+        >{{ notas or '' }}</textarea>
 
         <br><br>
 
+        <!-- Envia os dados para a rota Python -->
         <button type="submit">Salvar</button>
 
-        <p>
-            <a href="/">Voltar à página inicial</a>
-        </p>
+        <br><br>
+
+        <!-- Permite retornar à página inicial -->
+        <a href="/">Voltar à página inicial</a>
 
     </form>
 
     <script>
+
+        // Obtém o campo responsável pela seleção do tipo de alimentação
         const tipoAlimentacao = document.getElementById("tipo_alimentacao");
 
+        // Obtém os grupos de campos específicos de cada tipo de alimentação
         const camposAmamentacao = document.getElementById("campos_amamentacao");
         const camposMamadeira = document.getElementById("campos_mamadeira");
         const camposSolidos = document.getElementById("campos_solidos");
 
+        // Atualiza os campos apresentados conforme o tipo de alimentação selecionado
         function atualizarCampos() {
 
+            // Oculta todos os grupos de campos inicialmente
             camposAmamentacao.hidden = true;
             camposMamadeira.hidden = true;
             camposSolidos.hidden = true;
 
+            // Agrupa os campos específicos de cada tipo de alimentação
             const grupos = [
                 camposAmamentacao,
                 camposMamadeira,
                 camposSolidos
             ];
 
+            // Desativa os campos e remove a obrigatoriedade de todos os grupos
             grupos.forEach(grupo => {
                 grupo.querySelectorAll("input, select").forEach(campo => {
                     campo.disabled = true;
@@ -204,42 +265,58 @@
                 });
             });
 
+            // Identifica qual grupo deve ser apresentado
             let grupoAtivo;
 
             if (tipoAlimentacao.value === "amamentacao") {
                 grupoAtivo = camposAmamentacao;
+
             } else if (tipoAlimentacao.value === "mamadeira") {
                 grupoAtivo = camposMamadeira;
+
             } else if (tipoAlimentacao.value === "solidos") {
                 grupoAtivo = camposSolidos;
             }
 
+            // Apresenta e ativa os campos do grupo selecionado
             if (grupoAtivo) {
+
                 grupoAtivo.hidden = false;
 
                 grupoAtivo.querySelectorAll("input, select").forEach(campo => {
                     campo.disabled = false;
                 });
 
+                // Torna obrigatória a seleção da mama na amamentação
                 if (grupoAtivo === camposAmamentacao) {
+
                     document.getElementById("mama_lados").required = true;
+
                 }
 
+                // Torna obrigatórios o alimento e a quantidade na mamadeira
                 else if (grupoAtivo === camposMamadeira) {
+
                     document.getElementById("alimento_mamadeira").required = true;
                     document.getElementById("quantidade_mamadeira").required = true;
+
                 }
 
+                // Torna obrigatórios o alimento, a quantidade e a aceitação nos sólidos
                 else if (grupoAtivo === camposSolidos) {
+
                     document.getElementById("alimento_solido").required = true;
                     document.getElementById("quantidade_solidos").required = true;
                     document.getElementById("aceitacao").required = true;
+
                 }
             }
         }
 
+        // Atualiza os campos sempre que o tipo de alimentação for alterado
         tipoAlimentacao.addEventListener("change", atualizarCampos);
 
+        // Atualiza os campos quando a página é carregada
         atualizarCampos();
 
     </script>

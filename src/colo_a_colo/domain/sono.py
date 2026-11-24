@@ -1,18 +1,18 @@
+
 class Sono:
 
     @staticmethod
-    def registrar_sono(conn, id_registro, inicio_sono, fim_sono=None, notas=None):
-
+    def registrar_sono(conn, id_rotina, fim_sono=None, notas=None):
         """Registra soneca ou sono noturno na base de dados"""
 
         # Cria o cursor para executar comandos SQL
         cursor = conn.cursor()
 
-        # executa a consulta SQL
+        # Insere os dados do sono na base de dados
         cursor.execute("""
-            INSERT INTO sono (id_registro, inicio_sono, fim_sono, notas)
-            VALUES (?, ?, ?, ?)
-        """, (id_registro, inicio_sono, fim_sono, notas))
+            INSERT INTO sono (id_rotina, fim_sono, notas)
+            VALUES (?, ?, ?)
+        """, (id_rotina, fim_sono, notas))
 
-        # Retorna o ID do registro associado
-        return id_registro
+        # Retorna o ID da rotina associado ao sono
+        return id_rotina

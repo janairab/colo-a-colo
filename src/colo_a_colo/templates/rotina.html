@@ -16,31 +16,73 @@
     <!-- Título da página -->
     <h1>Adicionar Rotina</h1>
 
-    <!-- Orienta o cuidador a escolher o tipo de rotina -->
-    <p>Selecione o registro que deseja adicionar:</p>
+    <!-- Formulário para selecionar os dados iniciais do registro -->
+    <form method="POST" action="{{ url_for('rotina.nova_rotina') }}">
 
-    <!--
-        Lista as opções de rotina disponíveis.
-        Cada opção direciona para o formulário correspondente.
-    -->
-    <ul>
+        <!-- Seleção do bebê -->
+        <label for="id_bebe">Bebê:</label>
+        <select id="id_bebe" name="id_bebe" required>
 
-        <!-- Direciona para o formulário de alimentação -->
-        <li><a href="/novo/alimentacao">Registrar Alimentação</a></li>
+            <option value="">Selecione o bebê</option>
 
-        <!-- Direciona para o formulário de banho -->
-        <li><a href="/novo/banho">Registrar Banho</a></li>
+            {% for bebe in bebes %}
+                <option value="{{ bebe[0] }}">
+                    {{ bebe[1] }}
+                </option>
+            {% endfor %}
 
-        <!-- Direciona para o formulário de sono -->
-        <li><a href="/novo/sono">Registrar Sono</a></li>
+        </select>
 
-        <!-- Direciona para o formulário de fralda -->
-        <li><a href="/novo/fralda">Registrar Fralda</a></li>
+        <br><br>
 
-    </ul>
+        <!-- Data e hora do registro -->
+        <label for="data_hora">Data e hora:</label>
+        <input
+            type="datetime-local"
+            id="data_hora"
+            name="data_hora"
+            min="{{ data_minima_html }}"
+            max="{{ data_maxima_html }}"
+            value="{{ data_maxima_html }}"
+            required
+        >
+
+        <br><br>
+
+        <!-- Seleção do tipo de registro -->
+        <label for="tipo_registro">Tipo de registro:</label>
+        <select id="tipo_registro" name="tipo_registro" required>
+
+            <option value="">Selecione o tipo de registro</option>
+            <option value="alimentacao">Alimentação</option>
+            <option value="sono">Sono</option>
+            <option value="banho">Banho</option>
+            <option value="fralda">Fralda</option>
+
+        </select>
+
+        <br><br>
+
+        <!-- Campo para observações -->
+        <label for="notas">Observações:</label>
+        <textarea
+            id="notas"
+            name="notas"
+            rows="4"
+            cols="40"
+        ></textarea>
+
+        <br><br>
+
+        <!-- Envia os dados para a rota geral -->
+        <button type="submit">Continuar</button>
+
+    </form>
+
+    <br>
 
     <!-- Retorna à página inicial -->
-    <p><a href="/">Voltar à página inicial</a></p>
+    <a href="/">Voltar à página inicial</a>
 
 </body>
 </html>

@@ -1,8 +1,7 @@
-
 class Fralda:
 
     @staticmethod
-    def registrar_fralda(conn, id_registro, xixi=False, coco=False, notas=None):
+    def registrar_fralda(conn, id_rotina, xixi=False, coco=False, notas=None):
 
         """Registra uma fralda na base de dados"""
 
@@ -20,9 +19,9 @@ class Fralda:
 
         # Insere os dados da fralda na tabela
         cursor.execute("""
-            INSERT INTO fralda (id_registro, xixi, coco, notas)
+            INSERT INTO fralda (id_rotina, xixi, coco, notas)
             VALUES (?, ?, ?, ?)
-        """, (id_registro, xixi, coco, notas))
+        """, (id_rotina, xixi, coco, notas))
 
-        # Retorna o ID do registro associado à rotina
-        return id_registro
+        # Retorna o ID da rotina associada à fralda
+        return id_rotina

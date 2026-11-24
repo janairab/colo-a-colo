@@ -10,8 +10,20 @@ from colo_a_colo.routes.rota_cuidador import cuidador_bp
 # Importa o Blueprint que reúne as rotas relacionadas aos bebês
 from colo_a_colo.routes.rota_bebe import bebe_bp
 
-# Importa o Blueprint que reúne as rotas relacionadas à alimentacao
+# Importa o Blueprint que reúne as rotas relacionadas à alimentação
 from colo_a_colo.routes.rota_alimentacao import alimentacao_bp
+
+# Importa o Blueprint que reúne as rotas relacionadas à banho
+from colo_a_colo.routes.rota_banho import banho_bp
+
+# Importa o Blueprint que reúne as rotas relacionadas à fralda
+from colo_a_colo.routes.rota_fralda import fralda_bp
+
+# Importa o Blueprint que reúne as rotas relacionadas à sono
+from colo_a_colo.routes.rota_sono import sono_bp
+
+# Importa o Blueprint que reúne as rotas relacionadas à rotina
+from colo_a_colo.routes.rota_rotina import rotina_bp
 
 app = Flask(__name__)
 
@@ -23,6 +35,18 @@ app.register_blueprint(bebe_bp)
 
 # Registra na aplicação as rotas definidas no módulo da alimentação
 app.register_blueprint(alimentacao_bp)
+
+# Registra na aplicação as rotas definidas no módulo do banho
+app.register_blueprint(banho_bp)
+
+# Registra na aplicação as rotas definidas no módulo da fralda
+app.register_blueprint(fralda_bp)
+
+# Registra na aplicação as rotas definidas no módulo do sono
+app.register_blueprint(sono_bp)
+
+# Registra na aplicação as rotas definidas no módulo da rotina
+app.register_blueprint(rotina_bp)
 
 # Chave de sessão aleatória, gerada a cada arranque
 app.secret_key = secrets.token_hex(32)
