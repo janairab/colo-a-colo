@@ -1,0 +1,19 @@
+<!-- macro é o recurso do Jinja que usamos dentro do arquivo para reutilizar o código -->
+{% macro campo_com_limpeza(id_campo, descricao="Limpar campo") %}
+    <div class="campo-com-limpeza">
+
+        <!-- Insere o campo HTML enviado pela chamada da macro -->
+        {{ caller() }}
+
+        <!-- Cria o botão responsável por limpar o campo -->
+        <button
+            type="button"
+            class="botao-limpar"
+            data-limpar="{{ id_campo }}"
+            aria-label="{{ descricao }}"
+        >
+            X
+        </button>
+
+    </div>
+{% endmacro %}

@@ -1,0 +1,30 @@
+
+/* Organiza o campo e o botão de limpar na mesma linha */
+.campo-com-limpeza {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Define o tamanho e a aparência do botão de limpar */
+.botao-limpar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    background: #f0f0f0;
+    color: #777;
+    font-size: 16px;
+    font-weight: bold;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+}
+
+/* Destaca o botão quando o cursor passa sobre ele */
+.botao-limpar:hover {
+    color: #d33;
+    border-color: #d33;
+}

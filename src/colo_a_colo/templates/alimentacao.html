@@ -1,3 +1,4 @@
+{% from "componentes/botoes_limpar.html" import campo_com_limpeza %}
 
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -10,6 +11,12 @@
 
     <!-- Define o título apresentado na aba do navegador -->
     <title>Registrar Alimentação | Colo a Colo</title>
+
+    <!-- Carrega o CSS compartilhado dos botões de limpar -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='botoes_limpar.css') }}"
+    >
 </head>
 <body>
 
@@ -67,15 +74,17 @@
         <label for="data_hora">Data e hora:</label>
         <br>
 
-        <input
-            type="datetime-local"
-            id="data_hora"
-            name="data_hora"
-            value="{{ data_hora or '' }}"
-            min="{{ data_minima_html }}"
-            max="{{ data_maxima_html }}"
-            required
-        >
+        {% call campo_com_limpeza("data_hora", "Limpar data e hora") %}
+            <input
+                type="datetime-local"
+                id="data_hora"
+                name="data_hora"
+                value="{{ data_hora or '' }}"
+                min="{{ data_minima_html }}"
+                max="{{ data_maxima_html }}"
+                required
+            >
+        {% endcall %}
 
         <br><br>
 
@@ -105,11 +114,13 @@
             <label for="fim_amamentacao">Horário de término:</label>
             <br>
 
-            <input
-                type="time"
-                id="fim_amamentacao"
-                name="fim_amamentacao"
-            >
+            {% call campo_com_limpeza("fim_amamentacao", "Limpar horário de término") %}
+                <input
+                    type="time"
+                    id="fim_amamentacao"
+                    name="fim_amamentacao"
+                >
+            {% endcall %}
 
         </fieldset>
 
@@ -140,13 +151,15 @@
             <label for="quantidade_mamadeira">Quantidade:</label>
             <br>
 
-            <input
-                type="number"
-                id="quantidade_mamadeira"
-                name="quantidade"
-                min="0.1"
-                step="0.1"
-            >
+            {% call campo_com_limpeza("quantidade_mamadeira", "Limpar quantidade da mamadeira") %}
+                <input
+                    type="number"
+                    id="quantidade_mamadeira"
+                    name="quantidade"
+                    min="0.1"
+                    step="0.1"
+                >
+            {% endcall %}
 
             <!-- Identifica a unidade de medida da quantidade -->
             <span>ml</span>
@@ -164,12 +177,14 @@
             <label for="alimento_solido">Alimento:</label>
             <br>
 
-            <input
-                type="text"
-                id="alimento_solido"
-                name="alimento"
-                placeholder="Ex.: Papa de legumes"
-            >
+            {% call campo_com_limpeza("alimento_solido", "Limpar alimento sólido") %}
+                <input
+                    type="text"
+                    id="alimento_solido"
+                    name="alimento"
+                    placeholder="Ex.: Papa de legumes"
+                >
+            {% endcall %}
 
             <br><br>
 
@@ -177,13 +192,15 @@
             <label for="quantidade_solidos">Quantidade:</label>
             <br>
 
-            <input
-                type="number"
-                id="quantidade_solidos"
-                name="quantidade"
-                min="0.1"
-                step="0.1"
-            >
+            {% call campo_com_limpeza("quantidade_solidos", "Limpar quantidade dos sólidos") %}
+                <input
+                    type="number"
+                    id="quantidade_solidos"
+                    name="quantidade"
+                    min="0.1"
+                    step="0.1"
+                >
+            {% endcall %}
 
             <!-- Identifica a unidade de medida da quantidade -->
             <span>g</span>
@@ -213,12 +230,14 @@
         <label for="notas">Observações:</label>
         <br>
 
-        <textarea
-            id="notas"
-            name="notas"
-            rows="3"
-            placeholder="Adicione alguma observação..."
-        >{{ notas or '' }}</textarea>
+        {% call campo_com_limpeza("notas", "Limpar observações") %}
+            <textarea
+                id="notas"
+                name="notas"
+                rows="3"
+                placeholder="Adicione alguma observação..."
+            >{{ notas or '' }}</textarea>
+        {% endcall %}
 
         <br><br>
 
@@ -320,6 +339,9 @@
         atualizarCampos();
 
     </script>
+
+    <!-- Carrega o JavaScript compartilhado dos botões de limpar -->
+    <script src="{{ url_for('static', filename='botoes_limpar.js') }}"></script>
 
 </body>
 </html>
