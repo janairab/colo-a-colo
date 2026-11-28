@@ -1,4 +1,6 @@
 
+{% from "componentes/botoes_limpar.html" import campo_com_limpeza %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,7 +12,14 @@
 
     <!-- Título apresentado na aba do navegador -->
     <title>Registrar Sono | Colo a Colo</title>
+
+    <!-- Carrega o CSS dos botões de limpar -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='botoes_limpar.css') }}"
+    >
 </head>
+
 <body>
 
     <!-- Título da página -->
@@ -38,14 +47,16 @@
         <label for="data_hora">Início do sono:</label>
         <br>
 
-        <input
-            type="datetime-local"
-            id="data_hora"
-            name="data_hora"
-            min="{{ data_minima_html }}"
-            max="{{ data_maxima_html }}"
-            required
-        >
+        {% call campo_com_limpeza("data_hora", "Limpar início do sono") %}
+            <input
+                type="datetime-local"
+                id="data_hora"
+                name="data_hora"
+                min="{{ data_minima_html }}"
+                max="{{ data_maxima_html }}"
+                required
+            >
+        {% endcall %}
 
         <br><br>
 
@@ -53,11 +64,13 @@
         <label for="fim_sono">Término do sono:</label>
         <br>
 
-        <input
-            type="datetime-local"
-            id="fim_sono"
-            name="fim_sono"
-        >
+        {% call campo_com_limpeza("fim_sono", "Limpar término do sono") %}
+            <input
+                type="datetime-local"
+                id="fim_sono"
+                name="fim_sono"
+            >
+        {% endcall %}
 
         <br><br>
 
@@ -65,12 +78,14 @@
         <label for="notas">Observações:</label>
         <br>
 
-        <textarea
-            id="notas"
-            name="notas"
-            rows="3"
-            placeholder="Adicione alguma observação..."
-        ></textarea>
+        {% call campo_com_limpeza("notas", "Limpar observações") %}
+            <textarea
+                id="notas"
+                name="notas"
+                rows="3"
+                placeholder="Adicione alguma observação..."
+            ></textarea>
+        {% endcall %}
 
         <br><br>
 
@@ -81,6 +96,9 @@
         <p><a href="/">Voltar à página inicial</a></p>
 
     </form>
+
+    <!-- Carrega o JavaScript dos botões de limpar -->
+    <script src="{{ url_for('static', filename='botoes_limpar.js') }}"></script>
 
 </body>
 </html>

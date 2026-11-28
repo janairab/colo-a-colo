@@ -1,4 +1,6 @@
 
+{% from "componentes/botoes_limpar.html" import campo_com_limpeza %}
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,7 +12,14 @@
 
     <!-- Título apresentado na aba do navegador -->
     <title>Registrar Fralda | Colo a Colo</title>
+
+    <!-- Carrega o CSS compartilhado dos botões de limpar -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='botoes_limpar.css') }}"
+    >
 </head>
+
 <body>
 
     <!-- Título da página -->
@@ -38,17 +47,18 @@
         <label for="data_hora">Data e hora:</label>
         <br>
 
-        <input
-            type="datetime-local"
-            id="data_hora"
-            name="data_hora"
-            min="{{ data_minima_html }}"
-            max="{{ data_maxima_html }}"
-            required
-        >
+        {% call campo_com_limpeza("data_hora", "Limpar data e hora") %}
+            <input
+                type="datetime-local"
+                id="data_hora"
+                name="data_hora"
+                min="{{ data_minima_html }}"
+                max="{{ data_maxima_html }}"
+                required
+            >
+        {% endcall %}
 
         <br><br>
-
 
         <!-- Seleção do que foi encontrado na fralda -->
         <p>O que havia na fralda?</p>
@@ -73,19 +83,20 @@
         >
         <label for="coco">Cocô</label>
 
-
         <br><br>
 
         <!-- Campo opcional para observações -->
         <label for="notas">Observações:</label>
         <br>
 
-        <textarea
-            id="notas"
-            name="notas"
-            rows="3"
-            placeholder="Adicione alguma observação..."
-        ></textarea>
+        {% call campo_com_limpeza("notas", "Limpar observações") %}
+            <textarea
+                id="notas"
+                name="notas"
+                rows="3"
+                placeholder="Adicione alguma observação..."
+            ></textarea>
+        {% endcall %}
 
         <br><br>
 
@@ -96,6 +107,9 @@
         <p><a href="/">Voltar à página inicial</a></p>
 
     </form>
+
+    <!-- Carrega o JavaScript compartilhado dos botões de limpar -->
+    <script src="{{ url_for('static', filename='botoes_limpar.js') }}"></script>
 
 </body>
 </html>
